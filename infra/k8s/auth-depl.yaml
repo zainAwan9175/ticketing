@@ -1,0 +1,71 @@
+# Which Kubernetes API version should be used
+apiVersion: apps/v1
+
+# Type of Kubernetes resource
+kind: Deployment
+
+# Information about the Deployment itself
+metadata:
+
+  # Name of the Deployment
+  name: auth-depl
+
+# Desired configuration of the Deployment
+spec:
+
+  # Number of Pod copies you want running
+  replicas: 1
+
+  # Which Pods belong to this Deployment
+  selector:
+    matchLabels:
+      app: auth
+
+  # Template for creating Pods
+  template:
+
+    # Pod metadata
+    metadata:
+      labels:
+        app: auth
+
+    # Pod specification
+    spec:
+
+      # Containers inside the Pod
+      containers:
+
+        # Container configuration
+        - name: auth
+
+          # Docker image
+          image: zainawan9175/auth
+          imagePullPolicy: IfNotPresent
+
+          # Environment variables
+          env:
+
+            # Name of env variable inside container
+            - name: JWT_KEY
+
+              # Value comes from Kubernetes Secret
+              valueFrom:
+
+                # Read from Secret
+                secretKeyRef:
+
+                  # Secret name
+                  name: jwt-secret
+
+                  # Key inside the Secret
+                  key: JWT_KEY
+
+            - name: MONGO_URI
+              value: mongodb://auth-mongo-srv:27017/auth
+
+            - name: AUTH_PORT
+              value: "3000"
+
+          # Exposed container port
+          ports:
+            - containerPort: 3000

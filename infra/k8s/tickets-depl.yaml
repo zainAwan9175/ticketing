@@ -1,0 +1,99 @@
+# Which Kubernetes API version should be used
+apiVersion: apps/v1
+
+# Type of Kubernetes resource
+kind: Deployment
+
+# Information about the Deployment itself
+metadata:
+
+  # Name of the Deployment
+  name: tickets-depl
+
+# Desired configuration of the Deployment
+spec:
+
+  # Number of Pod copies you want running
+  replicas: 1
+
+  # Which Pods belong to this Deployment
+  selector:
+    matchLabels:
+      app: tickets
+
+  # Template for creating Pods
+  template:
+
+    # Pod metadata
+    metadata:
+      labels:
+        app: tickets
+
+    # Pod specification
+    spec:
+
+      # Containers inside the Pod
+      containers:
+
+        # Container configuration
+        - name: tickets
+
+          # Docker image
+          image: zainawan9175/tickets
+          imagePullPolicy: IfNotPresent
+
+          # Environment variables
+          env:
+
+            # Name of env variable inside container
+            - name: JWT_KEY
+
+              # Value comes from Kubernetes Secret
+              valueFrom:
+
+                # Read from Secret
+                secretKeyRef:
+
+                  # Secret name
+                  name: jwt-secret
+
+                  # Key inside the Secret
+                  key: JWT_KEY
+
+            - name: MONGO_URI
+              value: mongodb://tickets-mongo-srv:27017/tickets
+
+            - name: TICKETS_PORT
+              value: "3000"
+
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+
+            - name: NATS_CLUSTER_ID
+              value: ticketing
+
+          # Exposed container port
+          ports:
+            - containerPort: 3000
+          
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tickets-srv
+spec:
+  selector:
+    app: tickets
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+  type: ClusterIP

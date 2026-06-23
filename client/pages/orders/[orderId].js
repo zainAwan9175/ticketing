@@ -28,19 +28,34 @@ const OrderShow = ({ order, currentUser }) => {
   }, [order]);
 
   if (timeLeft < 0) {
-    return <div>Order Expired</div>;
+    return (
+      <div className="gt-status">
+        <div className="gt-status__emoji">⌛</div>
+        <div className="gt-status__title">Order expired</div>
+        <div className="gt-status__text">
+          This reservation timed out. Please start a new order.
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div>
-      Time left to pay: {timeLeft} seconds
+    <div className="gt-panel">
+      <span className="gt-countdown">
+        <span className="gt-dot" />
+        {timeLeft}s left to pay
+      </span>
+      <h1 className="gt-panel__title">Complete your purchase</h1>
+      <p className="gt-panel__subtitle">
+        {order.ticket.title} — <strong>${order.ticket.price}</strong>
+      </p>
       <StripeCheckout
         token={({ id }) => doRequest({ token: id })}
         stripeKey="pk_test_51RAV5oPMh3tFCWXQJef6rfCiwgzIC7UhFoK3f0551KFiptOFTvrVMDFCqNOIz9PPFS2HwgIANQDOGfSTnknSRoyI00niV0MuIk"
         amount={order.ticket.price * 100}
         email={currentUser.email}
       />
-      {errors}
+      <div className="gt-mt">{errors}</div>
     </div>
   );
 };

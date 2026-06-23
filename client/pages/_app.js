@@ -1,14 +1,18 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import '../styles/globals.css';
 import buildClient from '../api/build-client';
 import Header from '../components/header';
 
 const AppComponent = ({ Component, pageProps, currentUser }) => {
   return (
-    <div>
+    <div className="gt-shell">
       <Header currentUser={currentUser} />
-      <div className="container">
+      <main className="gt-main">
         <Component currentUser={currentUser} {...pageProps} />
-      </div>
+      </main>
+      <footer className="gt-footer">
+        GitTix · microservices ticketing · deployed on GKE 🚀
+      </footer>
     </div>
   );
 };

@@ -22,27 +22,34 @@ export default () => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h1>Sign In</h1>
-      <div className="form-group">
-        <label>Email Address</label>
-        <input
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="form-control"
-        />
-      </div>
-      <div className="form-group">
-        <label>Password</label>
-        <input
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          type="password"
-          className="form-control"
-        />
-      </div>
-      {errors}
-      <button className="btn btn-primary">Sign In</button>
-    </form>
+    <div className="gt-panel">
+      <h1 className="gt-panel__title">Welcome back</h1>
+      <p className="gt-panel__subtitle">Sign in to continue to GitTix.</p>
+      <form onSubmit={onSubmit}>
+        <div className="gt-field">
+          <label className="gt-label">Email address</label>
+          <input
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className="gt-input"
+            placeholder="you@example.com"
+          />
+        </div>
+        <div className="gt-field">
+          <label className="gt-label">Password</label>
+          <input
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            type="password"
+            className="gt-input"
+            placeholder="••••••••"
+          />
+        </div>
+        {errors}
+        <button className="gt-btn gt-btn--primary gt-btn--block gt-btn--lg gt-mt">
+          Sign In
+        </button>
+      </form>
+    </div>
   );
 };

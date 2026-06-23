@@ -14,5 +14,11 @@ export default () => {
     doRequest();
   }, []);
 
-  return <div>Signing you out...</div>;
+  return (
+    <div className="gt-status">
+      <div className="gt-status__emoji">👋</div>
+      <div className="gt-status__title">Signing you out…</div>
+      <div className="gt-status__text">Hang tight, redirecting you home.</div>
+    </div>
+  );
 };

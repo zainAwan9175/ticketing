@@ -4,15 +4,15 @@ export default ({ currentUser }) => {
   const links = [
     !currentUser && { label: 'Sign Up', href: '/auth/signup' },
     !currentUser && { label: 'Sign In', href: '/auth/signin' },
-    currentUser && { label: 'Sell Tickets', href: '/tickets/new' },
+    currentUser && { label: 'Sell Tickets', href: '/tickets/new', cta: true },
     currentUser && { label: 'My Orders', href: '/orders' },
     currentUser && { label: 'Sign Out', href: '/auth/signout' },
   ]
     .filter((linkConfig) => linkConfig)
-    .map(({ label, href }) => {
+    .map(({ label, href, cta }) => {
       return (
-        <li key={href} className="nav-item">
-          <Link className="nav-link" href={href}>
+        <li key={href}>
+          <Link className={`gt-navlink ${cta ? 'gt-navlink--cta' : ''}`} href={href}>
             {label}
           </Link>
         </li>
@@ -20,13 +20,14 @@ export default ({ currentUser }) => {
     });
 
   return (
-    <nav className="navbar navbar-light bg-light">
-      <Link className="navbar-brand" href="/">
-        GitTix
-      </Link>
+    <nav className="gt-nav">
+      <div className="gt-nav__inner">
+        <Link className="gt-brand" href="/">
+          <span className="gt-brand__logo">🎟️</span>
+          <span className="gt-brand__name">GitTix</span>
+        </Link>
 
-      <div className="d-flex justify-content-end">
-        <ul className="nav d-flex align-items-center">{links}</ul>
+        <ul className="gt-navlinks">{links}</ul>
       </div>
     </nav>
   );

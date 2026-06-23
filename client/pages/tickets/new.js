@@ -32,28 +32,38 @@ const NewTicket = () => {
   };
 
   return (
-    <div>
-      <h1>Create a Ticket</h1>
+    <div className="gt-panel">
+      <h1 className="gt-panel__title">Sell a ticket</h1>
+      <p className="gt-panel__subtitle">
+        List your ticket on the GitTix marketplace.
+      </p>
       <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label>Title</label>
+        <div className="gt-field">
+          <label className="gt-label">Title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="form-control"
+            className="gt-input"
+            placeholder="e.g. Coldplay — Front Row"
           />
         </div>
-        <div className="form-group">
-          <label>Price</label>
-          <input
-            value={price}
-            onBlur={onBlur}
-            onChange={(e) => setPrice(e.target.value)}
-            className="form-control"
-          />
+        <div className="gt-field">
+          <label className="gt-label">Price</label>
+          <div className="gt-input-group">
+            <span className="gt-input-group__prefix">$</span>
+            <input
+              value={price}
+              onBlur={onBlur}
+              onChange={(e) => setPrice(e.target.value)}
+              className="gt-input"
+              placeholder="0.00"
+            />
+          </div>
         </div>
         {errors}
-        <button className="btn btn-primary">Submit</button>
+        <button className="gt-btn gt-btn--primary gt-btn--block gt-btn--lg gt-mt">
+          Publish ticket
+        </button>
       </form>
     </div>
   );

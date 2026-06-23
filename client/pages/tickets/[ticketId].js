@@ -13,12 +13,21 @@ const TicketShow = ({ ticket }) => {
   });
 
   return (
-    <div>
-      <h1>{ticket.title}</h1>
-      <h4>Price: {ticket.price}</h4>
-      {errors}
-      <button onClick={() => doRequest()} className="btn btn-primary">
-        Purchase
+    <div className="gt-panel">
+      <div className="gt-hero__eyebrow" style={{ color: 'var(--muted)' }}>
+        Ticket details
+      </div>
+      <h1 className="gt-panel__title">{ticket.title}</h1>
+      <div className="gt-price gt-mt">
+        <small>$</small>
+        {ticket.price}
+      </div>
+      <div className="gt-mt">{errors}</div>
+      <button
+        onClick={() => doRequest()}
+        className="gt-btn gt-btn--primary gt-btn--block gt-btn--lg gt-mt"
+      >
+        Purchase ticket
       </button>
     </div>
   );

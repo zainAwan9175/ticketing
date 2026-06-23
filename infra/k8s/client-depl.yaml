@@ -18,7 +18,9 @@ spec:
     spec:
       containers:
         - name: client
-          image: zainawan9175/client
+          # image: zainawan9175/client                                    # old: Docker Hub
+          image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/client
+          imagePullPolicy: IfNotPresent
 
 ---
 apiVersion: v1

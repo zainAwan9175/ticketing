@@ -5,13 +5,16 @@ deploy:
   kubectl:
     manifests:
       - ./infra/k8s/*
+      
 
 build:
   local:
-    push: true
+    # push: false      # old: local-only (Docker Desktop), no registry push
+    push: true          # GKE: build locally and push to Artifact Registry
 
   artifacts:
-    - image: zainawan9175/auth
+    # - image: zainawan9175/auth                                        # old: Docker Hub
+    - image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/auth
       context: auth
 
       docker:
@@ -22,7 +25,8 @@ build:
           - src: 'src/**/*.ts'
             dest: .
 
-    - image: zainawan9175/client
+    # - image: zainawan9175/client                                      # old: Docker Hub
+    - image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/client
       context: client
 
       docker:
@@ -33,7 +37,8 @@ build:
           - src: '**/*.js'
             dest: .
 
-    - image: zainawan9175/tickets
+    # - image: zainawan9175/tickets                                     # old: Docker Hub
+    - image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/tickets
       context: tickets
 
       docker:
@@ -44,7 +49,8 @@ build:
           - src: 'src/**/*.ts'
             dest: .
 
-    - image: zainawan9175/orders
+    # - image: zainawan9175/orders                                      # old: Docker Hub
+    - image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/orders
       context: orders
 
       docker:
@@ -54,7 +60,8 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: zainawan9175/expiration
+    # - image: zainawan9175/expiration                                  # old: Docker Hub
+    - image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/expiration
       context: expiration
 
       docker:
@@ -64,7 +71,8 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
-    - image: zainawan9175/payments
+    # - image: zainawan9175/payments                                    # old: Docker Hub
+    - image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/payments
       context: payments
 
       docker:

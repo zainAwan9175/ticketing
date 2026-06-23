@@ -39,7 +39,8 @@ spec:
         - name: tickets
 
           # Docker image
-          image: zainawan9175/tickets
+          # image: zainawan9175/tickets                                   # old: Docker Hub
+          image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/tickets
           imagePullPolicy: IfNotPresent
 
           # Environment variables

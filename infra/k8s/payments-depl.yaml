@@ -39,7 +39,8 @@ spec:
         - name: payments
 
           # Docker image
-          image: zainawan9175/payments
+          # image: zainawan9175/payments                                  # old: Docker Hub
+          image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/payments
           imagePullPolicy: IfNotPresent
 
           # Environment variables
@@ -95,7 +96,7 @@ kind: Service
 metadata:
   name: payments-srv
 spec:
-  selector:
+  selector: 
     app: payments
   ports:
     - protocol: TCP

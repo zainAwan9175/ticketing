@@ -39,7 +39,8 @@ spec:
         - name: auth
 
           # Docker image
-          image: zainawan9175/auth
+          # image: zainawan9175/auth                                      # old: Docker Hub
+          image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/auth
           imagePullPolicy: IfNotPresent
 
           # Environment variables

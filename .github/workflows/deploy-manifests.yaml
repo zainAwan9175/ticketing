@@ -1,0 +1,57 @@
+# =============================================================================
+#  deploy-manifests  —  Apply our Kubernetes YAML to GKE (Google Cloud)
+# -----------------------------------------------------------------------------
+#  Whenever you change anything under infra/ (deployments, services, ingress,
+#  secrets...), this re-applies the YAML to the cluster with `kubectl apply`.
+#  It does NOT build any Docker images — the per-service workflows do that.
+#
+#  This replaces the old DigitalOcean flow (doctl + kubeconfig save).
+# =============================================================================
+
+name: deploy-manifests
+
+# ---- WHEN does this run? -----------------------------------------------------
+# Only when something under infra/ is pushed to the main branch.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/**'
+
+# ---- OUR GCP VALUES ----------------------------------------------------------
+env:
+  PROJECT_ID: ride-wave-464217   # GCP project ID
+  CLUSTER: ticketing             # GKE cluster name
+  ZONE: asia-south1-a            # GKE cluster zone
+
+jobs:
+  apply-manifests:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) Copy our repository onto the GitHub runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2) Log in to Google Cloud using the Service Account key stored in GitHub secrets
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # 3) Install the gcloud CLI (it reuses the login from step 2)
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # 4) Point kubectl at our GKE cluster
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.CLUSTER }}
+          location: ${{ env.ZONE }}
+
+      # 5) Apply every manifest in infra/k8s.
+      #    NOTE: the old DigitalOcean version also applied infra/k8s-prod, but
+      #    this repo has no k8s-prod folder, so we only apply infra/k8s.
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -f infra/k8s

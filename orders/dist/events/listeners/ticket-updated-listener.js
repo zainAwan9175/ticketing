@@ -12,7 +12,7 @@ export class TicketUpdatedListener extends Listener {
         }
         ticket.set({
             title,
-            price
+            price,
         });
         await ticket.save();
         msg.ack();

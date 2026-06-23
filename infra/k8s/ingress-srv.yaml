@@ -78,3 +78,45 @@ spec:
                 name: client-srv
                 port:
                   number: 3000
+
+    # --- ADDED for GKE: host-less (catch-all) rule so the app is also
+    # --- reachable directly by the LoadBalancer IP (http://34.100.236.207)
+    # --- with no domain. The host: ticket.dev and host: localhost rules
+    # --- above are kept unchanged for local development.
+    - http:
+        paths:
+          - path: /api/users/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-srv
+                port:
+                  number: 3000
+          - path: /api/tickets/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: tickets-srv
+                port:
+                  number: 3000
+          - path: /api/orders/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: orders-srv
+                port:
+                  number: 3000
+          - path: /api/payments/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: payments-srv
+                port:
+                  number: 3000
+          - path: /?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: client-srv
+                port:
+                  number: 3000

@@ -14,7 +14,9 @@ spec:
     spec:
       containers:
         - name: expiration
-          image: zainawan9175/expiration
+          # image: zainawan9175/expiration                                # old: Docker Hub
+          image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/expiration
+          imagePullPolicy: IfNotPresent
           env:
             - name: NATS_CLIENT_ID
               valueFrom:

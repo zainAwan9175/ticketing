@@ -1,0 +1,75 @@
+# =============================================================================
+#  deploy-expiration  —  Build the "expiration" service and ship it to GKE (Google Cloud)
+# -----------------------------------------------------------------------------
+#    1. Build a Docker image from the expiration/ folder
+#    2. Push that image to Google Artifact Registry (our private image store)
+#    3. Tell our GKE cluster to run the new image
+#
+#  This replaces the old DigitalOcean flow (doctl + Docker Hub).
+# =============================================================================
+
+name: deploy-expiration
+
+# ---- WHEN does this run? -----------------------------------------------------
+# Only when code inside the expiration/ folder is pushed to the main branch.
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'expiration/**'
+
+# ---- OUR GCP VALUES ----------------------------------------------------------
+env:
+  PROJECT_ID: ride-wave-464217   # GCP project ID
+  REGION: asia-south1            # Artifact Registry region (Mumbai)
+  REPO: ticketing                # Artifact Registry repository name
+  CLUSTER: ticketing             # GKE cluster name
+  ZONE: asia-south1-a            # GKE cluster zone
+  SERVICE: expiration            # this service = image name = deployment/container name
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) Copy our repository onto the GitHub runner
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2) Log in to Google Cloud using the Service Account key stored in GitHub secrets
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      # 3) Install the gcloud CLI (it reuses the login from step 2)
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      # 4) Let `docker push` authenticate to Artifact Registry in our region
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # 5) Build the Docker image, tagged with the commit SHA so every push is unique
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }} \
+            ./${{ env.SERVICE }}
+
+      # 6) Upload the image to Artifact Registry
+      - name: Push Docker image
+        run: docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}
+
+      # 7) Point kubectl at our GKE cluster
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ env.CLUSTER }}
+          location: ${{ env.ZONE }}
+
+      # 8) Swap the running deployment onto the new image (triggers a rolling update)
+      - name: Roll out the new image
+        run: |
+          kubectl set image deployment/${{ env.SERVICE }}-depl \
+            ${{ env.SERVICE }}=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }}

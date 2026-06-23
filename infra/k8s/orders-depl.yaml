@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: orders
-          image: zainawan9175/orders
+          # image: zainawan9175/orders                                    # old: Docker Hub
+          image: asia-south1-docker.pkg.dev/ride-wave-464217/ticketing/orders
           imagePullPolicy: IfNotPresent
           env:
             - name: JWT_KEY
